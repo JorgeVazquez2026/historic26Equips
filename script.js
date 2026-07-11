@@ -167,32 +167,29 @@ function detectarMiembro() {
   completarDatosFicha(miembroSeleccionado);
 }
 
-
 function completarDatosFicha(nombreJugador) {
-  console.log (nombreJugador)
   if (!datosEquipoActual) return;
   var datosP = datosEquipoActual.principal;
   var datosS = datosEquipoActual.secundaria;
   
-  // Buscar la columna del nombre en la fila 0
-  var colNom = -1;
-  for (var j = 0; j < datosP[0].length; j++) {
-    var txt = datosP[0][j].toString().trim().toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    if (txt.indexOf("NOM") > -1 || txt === "JUGADOR") { colNom = j; break; }
-  }
-  if (colNom === -1) return;
+  // Como sabemos que la columna de nombres es la segunda (Índice 1), la fijamos directamente
+  var colNom = 1; 
 
-  // Buscar la fila del jugador
+  // Buscamos en vertical qué fila coincide con el jugador seleccionado
   var filaIdx = -1;
   for (var i = 1; i < datosP.length; i++) {
-    if (datosP[i][colNom].toString().trim() === nombreJugador) { filaIdx = i; break; }
+    if (datosP[i][colNom].toString().trim() === nombreJugador) { 
+      filaIdx = i; 
+      break; 
+    }
   }
   if (filaIdx === -1) return;
 
-  // Construir las líneas verticales de datos
+  // Empezamos a fabricar las líneas de texto de la ficha hacia abajo
   var tablaHtml = '<table style="width: 100%; border-collapse: collapse;">';
   
-  // Añadir datos de la tabla principal (C:I)
+  // 1. Añadimos los datos de la Tabla Principal (C:I)
+  // datosP[0] contiene los títulos de las columnas de tu Excel
   for (var j = 0; j < datosP[0].length; j++) {
     var tit = datosP[0][j].toString().trim();
     var val = datosP[filaIdx][j].toString().trim();
@@ -204,7 +201,8 @@ function completarDatosFicha(nombreJugador) {
     tablaHtml += '</tr>';
   }
   
-  // Añadir datos de la tabla secundaria (K)
+  // 2. Añadimos los datos de la Tabla Secundaria (K)
+  // datosS[0] contiene los títulos de la columna K
   for (var j = 0; j < datosS[0].length; j++) {
     var titS = datosS[0][j].toString().trim();
     var valS = datosS[filaIdx][j].toString().trim();
@@ -217,8 +215,11 @@ function completarDatosFicha(nombreJugador) {
   }
   
   tablaHtml += '</table>';
+  // Inyectamos los datos limpios dentro de la tarjeta gris
   document.getElementById('datosFicha').innerHTML = tablaHtml;
 }
+
+
 
 
 // ==========================================
