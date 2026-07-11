@@ -88,101 +88,178 @@ function buscar() {
     }); 
 }
 
-// PROCESAR EL PAQUET JSON I PINTAR LES DUES TAULES
+// PROCESAR EL PAQUET JSON, PINTAR LES DUES TAULES I OMPLIR EL DESPLEGABLE
 function procesarDatos(resultadoBloques) { 
-  if (!resultadoBloques || !resultadoBloques.principal) { 
+  if (!resultadoBloques || !resultadoBloques.principal || resultadoBloques.principal.length === 0) { 
     document.getElementById('resultado').innerHTML = "<p style='color:red; text-align:center;'>La fulla està buida o no s'ha trobat.</p>"; 
     return; 
   } 
   
-  // Construeix la Taula 1 (C:I) amb colors per rol actius
-  var htmlFinal = generarEstructuraTabla(resultadoBloques.principal, "tablaDatosPrincipal", true); 
+  var datosPrincipal = resultadoBloques.principal;
   
-  // Afegeix l'espaiador buit entremig
+  // 1. Localizar la columna que se llama exactamente "NOM" en la cabecera (Fila 0)
+  var columnaNomIndex = -1;
+  for (var j = 0; j < datosPrincipal[0].length; j++) {
+    if (datosPrincipal[0][j].toString().trim().toUpperCase() === "NOM") {
+      columnaNomIndex = j;
+      break;
+    }
+  }
+  // 2. Extraer los nombres de los jugadores si la columna existe
+  var comboJugador = document.getElementById('jugador');
+  comboJugador.innerHTML = '<option value="">Tria membre</option>';
+  
+  if (columnaNomIndex !== -1) {
+    var nombresMiembros = [];
+    
+    // Empezamos en i = 1 para saltarnos los títulos
+    for (var i = 1; i < datosPrincipal.length; i++) {
+      var filaVacia = datosPrincipal[i].every(function(c) { return c.toString().trim() === ""; });
+      if (filaVacia) continue;
+      
+      var nombreValue = datosPrincipal[i][columnaNomIndex].toString().trim();
+      if (nombreValue !== "") {
+        nombresMiembros.push(nombreValue);
+      }
+    }
+    
+    // ORDENAR ALFABÉTICAMENTE los nombres obtenidos
+    nombresMiembros.sort(function(a, b) { return a.localeCompare(b); });
+    
+    // Insertar los nombres ordenados en el menú desplegable
+    nombresMiembros.forEach(function(nom) {
+      var opt = document.createElement('option');
+      opt.value = nom;
+      opt.text = nom;
+      comboJugador.appendChild(opt);
+    });
+    
+    // Desplazar visualmente los controles e iluminar el nuevo menú a la derecha
+    document.getElementById('bloqueJugador').style.display = "block";
+  }
+
+  var htmlFinal = generarEstructuraTabla(datosPrincipal, "tablaDatosPrincipal", true); 
   htmlFinal += "<div class='espacio-tablas'></div>"; 
-  
-  // Construeix la Taula 2 (K) sense colors per rol
   htmlFinal += generarEstructuraTabla(resultadoBloques.secundaria, "tablaDatosSecundaria", false); 
-  
   document.getElementById('resultado').innerHTML = htmlFinal; 
+}
+
+// ==========================================
+// FUNCIÓ PER SI EN EL FUTUR ES VOL FER ALGUNA COSA AMB EL JUGADOR ESCOLLIT
+// ==========================================
+function detectarMiembro() {
+  var miembroSeleccionado = document.getElementById('jugador').value;
+  if (miembroSeleccionado) {
+    console.log("Membre seleccionat: " + miembroSeleccionado);
+  }
 }
 
 // ==========================================
 // MOTOR DE CONSTRUCCIÓ DE LES TAULES HTML
 // ==========================================
 function generarEstructuraTabla(datos, idTabla, aplicarRoles) { 
+  // 1. Control de seguretat: Si no venen dades o l'array està buit, no dibuixa res
   if (!datos || datos.length === 0) return ''; 
   
+  // Iniciar la cadena de text on s'anirà muntant tota la taula HTML
   var html = '<div class="tabla-contenedor"><table id="' + idTabla + '">'; 
+  
+  // Array on guardarem els números (índexs) de les columnes que s'han de centrar
   var indicesAutoCentrados = []; 
   
-  // Guardamos la primera fila de datos para analizar los títulos de las columnas
+  // Guardem la primera fila (fila 0), que sempre conté els títols de les cabeceres
   var cabeceraFila = datos[0]; 
   
-  // Mapeamos qué columnas del CONTENIDO se centrarán (Dorsal, Data naixement, Anys al club)
+  // 2. MAPETJAR LES COLUMNES QUE S'HAN DE CENTRAR
+  // Recorrem totes les cel·les de la cabecera per buscar els noms de les columnes a centrar
   if (cabeceraFila && Array.isArray(cabeceraFila)) {
     for (var j = 0; j < cabeceraFila.length; j++) { 
+      // Convertim el text a minúscules i netegem espais per evitar errades d'escriptura al Sheets
       var nombreCabecera = cabeceraFila[j].toString().trim().toLowerCase(); 
+      
+      // Si la columna es diu Dorsal, Data naixement o Anys al club, guardem la seva posició (j)
       if (nombreCabecera === "dorsal" || nombreCabecera === "data naixement" || nombreCabecera === "anys al club") { 
         indicesAutoCentrados.push(j); 
       } 
     } 
   }
   
-  // Recorrer las filas de la tabla
+  // 3. RECORRER LES FILES DE DADES DEL SHEETS
   for (var i = 0; i < datos.length; i++) { 
+    // Comprovació: Si tota la fila sencera està buida de text, ens la saltem per no crear línies en blanc
     var filaVacia = datos[i].every(function(celda) { return celda.toString().trim() === ""; }); 
     if (filaVacia) continue; 
     
-    // Detectar si la fila pertenece a un entrenador
+    // Bandera de control per saber si a la fila actual hi ha un entrenador
     var esEntrenador = false; 
+    
+    // Si la taula té actiu el paràmetre 'aplicarRoles' i no estem a la cabecera (i > 0)...
     if (aplicarRoles && i > 0) { 
+      // Recorrem les cel·les d'aquesta fila per veure si algun text diu exactament "Entrenador"
       for (var c = 0; c < datos[i].length; c++) { 
         if (datos[i][c].toString().trim().toLowerCase() === "entrenador") { 
-          esEntrenador = true; 
-          break; 
+          esEntrenador = true; // Si el trobem, activem la bandera
+          break; // Sortim del bucle de cel·les, ja sabem que és l'entrenador
         } 
       } 
     } 
     
-    // Asignar la clase a la fila sutilmente
+    // 4. ASSIGNAR DISSENY A LA FILA (TR)
+    // Si i és 0 apliquem la classe 'cabecera'. Si esEntrenador és cert, 'fila-entrenador'. Si no, fila normal.
     var claseFila = (i === 0) ? 'class="cabecera"' : (esEntrenador ? 'class="fila-entrenador"' : ''); 
     html += '<tr ' + claseFila + '>'; 
     
-    // Recorrer las celdas de la fila actual
+    // 5. RECORRER CADA CEL·LA DE LA FILA ACTUAL
     for (var j = 0; j < datos[i].length; j++) { 
+      // Netegem els espais en blanc del text de la cel·la actual
       var valorCell = datos[i][j].toString().trim(); 
       
-      // Aplicar clase centrada si el índice de columna coincide
+      // Mirem si la columna actual ha de anar centrada segons el llistat que hem fet al Pas 2
       var claseCelda = indicesAutoCentrados.includes(j) ? 'class="col-auto-centrada"' : ''; 
       
+      // Si és la fila 0, pintem cel·les de cabecera (TH)
       if (i === 0) { 
-        // Las cabeceras ya se centran por CSS, no necesitan clase col-auto-centrada
+        // Nota: Les cabeceres ja es centren totes directament per les regles del fitxer CSS (index.html)
         html += '<th>' + valorCell + '</th>'; 
       } else { 
-        // Aplicar colores de rol si procede (Porter, Defensa, etc.)
+        // Si no és cabecera, pintem cel·les normals de dades (TD)
+        
+        // Si la taula demana colors per rol i NO és la fila sencera de l'entrenador...
         if (aplicarRoles && !esEntrenador) { 
           var textoMinuscula = valorCell.toLowerCase(); 
+          
+          // Busquem paraules clau individuals per pintar fons suaus segons la demarcació del jugador
           if (textoMinuscula === "porter") claseCelda = 'class="rol-porter"'; 
           else if (textoMinuscula === "defensa") claseCelda = 'class="rol-defensa"'; 
           else if (textoMinuscula === "migcampista") claseCelda = 'class="rol-migcampista"'; 
           else if (textoMinuscula === "davanter") claseCelda = 'class="rol-davanter"'; 
+          // Si la cel·la no és una demarcació però pertany a Dorsal/Data/Anys, manté el seu centratge
           else if (indicesAutoCentrados.includes(j)) claseCelda = 'class="col-auto-centrada"'; 
+          
         } else if (indicesAutoCentrados.includes(j)) { 
+          // Si no s'apliquen rols (Taula 2) o és la fila de l'entrenador, només hereta el centratge si correspon
           claseCelda = 'class="col-auto-centrada"'; 
         } 
+        
+        // Injectem la cel·la de dades (TD) a la línia HTML amb la seva classe de disseny i el seu text
         html += '<td ' + claseCelda + '>' + valorCell + '</td>'; 
       } 
     } 
-    html += '</tr>'; 
+    html += '</tr>'; // Tanquem la línia de la fila actual
     
-    // Inyectar fila de separación debajo del entrenador
+    // 6. INJECTAR FILA SEPARADORA POST-ENTRENADOR
+    // Si hem acabat de dibuixar la línia de l'entrenador, afegim immediatament una fila completament buida i transparent
     if (aplicarRoles && esEntrenador) { 
       html += '<tr class="fila-separadora">'; 
+      // Creem tantes cel·les buides com columnes tingui la taula per no desconfigurar l'estructura
       for (var k = 0; k < datos[i].length; k++) html += '<td></td>'; 
       html += '</tr>'; 
     } 
   } 
+  
+  // Tanquem les etiquetes de la taula i el seu contenidor de lliscament lateral
   html += '</table></div>'; 
+  
+  // Retornem tot el bloc HTML generat en forma de text perquè es pugui pintar a la web
   return html; 
 }
