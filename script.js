@@ -131,7 +131,7 @@ function procesarDatos(resultadoBloques) {
       if (columnaRolIndex !== -1) {
         var valorRol = datosPrincipal[i][columnaRolIndex].toString().trim().toLowerCase();
         if (valorRol === "entrenador") {
-          break; // Detiene la lectura de filas; ignora al entrenador y todo lo que esté debajo
+          continue; // Detiene la lectura de filas; ignora al entrenador y todo lo que esté debajo
         }
       }
     
