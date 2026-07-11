@@ -178,13 +178,18 @@ function detectarMiembro() {
   
   // Si el usuario selecciona "Esborrar" o la opción vacía, restauramos todo
   if (!miembroSeleccionado) {
-    comboJugador.options[0].text = "Tria membre"; // El texto vuelve a su estado original neutro
+    if (comboJugador.options[0]) {
+      comboJugador.options[0].text = "Tria membre"; // El texto vuelve a su estado original neutro
+    }
     renderizarTablasCompletas();
     return;
   }
 
-  // Ajuste: Como hay un jugador seleccionado y la ficha está activa, mutamos el texto a "Esborrar"
-  comboJugador.options[0].text = "Esborrar";
+  // Ajuste técnico: Cambiamos de forma estricta el texto del primer elemento (índice 0) a "Esborrar"
+  if (comboJugador.options[0]) {
+    comboJugador.options[0].text = "Esborrar";
+  }
+  
   if (!datosEquipoActual) return;
   
   var datosP = datosEquipoActual.principal;
@@ -229,7 +234,7 @@ function detectarMiembro() {
     htmlFicha += '<td style="padding: 10px; color: #333; font-size: 16px;">' + valorCamp + '</td>';
     htmlFicha += '</tr>';
   }
-  
+  var cabeceraS = datosS[0]; // Acceso correcto a la cabecera secundaria
   // Procesar campos de la Tabla Secundaria (K) hacia abajo en la misma ficha
   for (var j = 0; j < cabeceraS.length; j++) {
     var tituloCampS = cabeceraS[j].toString().trim();
