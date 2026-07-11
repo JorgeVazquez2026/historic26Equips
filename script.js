@@ -23,18 +23,39 @@ const ESCUDOS_EQUIPOS = {
 
 // Variable global interna para guardar los datos cargados del equipo actual
 let datosEquipoActual = null;
-window.onload = function() { document.getElementById("imgTorneo").src = URL_LOGO_TORNEO; fetch(`${URL_API}?accion=lista`).then(res => res.json()).then(cargarSelector).catch(err => console.error("Error llista:", err)); };
 
-function cambiarEscudo() { var eq = document.getElementById('equipo').value; var img = document.getElementById('escudoClub'); if (eq && ESCUDOS_EQUIPOS[eq]) { img.src = ESCUDOS_EQUIPOS[eq]; img.style.display = "block"; } else { img.style.display = "none"; } document.getElementById('bloqueJugador').style.display = "none"; document.getElementById('resultado').innerHTML = ""; datosEquipoActual = null; }
+window.onload = function() { 
+  document.getElementById("imgTorneo").src = URL_LOGO_TORNEO; 
+  fetch(`${URL_API}?accion=lista`)
+    .then(res => res.json())
+    .then(cargarSelector)
+    .catch(err => console.error("Error llista:", err)); 
+};
 
-function cargarSelector(equipos) { var select = document.getElementById('equipo'); select.innerHTML = '<option value="">Tria equip</option>'; if (equipos && Array.isArray(equipos)) { equipos.forEach(function(n) { var opt = document.createElement('option'); opt.value = n; opt.text = n; select.appendChild(opt); }); } }
+function cambiarEscudo() { 
+  var equipoSeleccionado = document.getElementById('equipo').value; 
+  var imgEscudo = document.getElementById('escudoClub'); 
+  
+  if (equipoSeleccionado && ESCUDOS_EQUIPOS[equipoSeleccionado]) { 
+    imgEscudo.src = ESCUDOS_EQUIPOS[equipoSeleccionado]; 
+    imgEscudo.style.display = "block"; 
+  } else { 
+    imgEscudo.style.display = "none"; 
+  }
+  document.getElementById('bloqueJugador').style.display = "none";
+  document.getElementById('resultado').innerHTML = "";
+  datosEquipoActual = null;
+}
 
-function buscar() { var eq = document.getElementById('equipo').value; if (!eq) { document.getElementById('resultado').innerHTML = "<p style='color:orange; text-align:center;'>Si us plau, selecciona un equip vàlid.</p>"; return; } document.getElementById('resultado').innerHTML = "<p class='cargando'>Buscant les dades...</p>"; fetch(`${URL_API}?accion=equipo&nombre=${encodeURIComponent(eq)}`).then(res => res.json()).then(procesarDatos).catch(err => { document.getElementById('resultado').innerHTML = "<p style='color:red; text-align:center;'>Error de connexió.</p>"; }); }
-
-function procesarDatos(res) { if (!res || !res.principal || res.principal.length === 0) { document.getElementById('resultado').innerHTML = "<p style='color:red; text-align:center;'>La fulla està buida o no s'ha trobat.</p>"; return; } datosEquipoActual = res; var dP = res.principal; var colNom = -1; var colRol = -1; if (dP && dP.length > 0) { for (var j = 0; j < dP[0].length; j++) { var txt = dP[0][j].toString().trim().toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); if (txt.indexOf("NOM") > -1 || txt === "JUGADOR") colNom = j; if (txt.indexOf("DEMARCACIO") > -1 || txt.indexOf("ROL") > -1 || txt.indexOf("POSICIO") > -1) colRol = j; } } var combo = document.getElementById('jugador'); combo.innerHTML = '<option value="">Tria jugador</option>'; if (colNom !== -1) { var nombres = []; var ignorar = false; for (var i = 1; i < dP.length; i++) { var vacia = dP[i].every(function(c) { return c.toString().trim() === ""; }); if (vacia) continue; if (colRol !== -1) { if (dP[i][colRol].toString().trim().toLowerCase() === "entrenador") { ignorar = true; } } if (!ignorar) { var val = dP[i][colNom].toString().trim(); if (val !== "") nombres.push(val); } } nombres.sort(function(a, b) { return a.localeCompare(b); }); nombres.forEach(function(n) { var opt = document.createElement('option'); opt.value = n; opt.text = n; combo.appendChild(opt); }); document.getElementById('bloqueJugador').style.display = "block"; } renderizarTablasCompletas(); }
-
-function renderizarTablasCompletas() { if (!datosEquipoActual) return; var html = generarEstructuraTabla(datosEquipoActual.principal, "tablaDatosPrincipal", true); html += "<div class='espacio-tablas'></div>"; html += generarEstructuraTabla(datosEquipoActual.secundaria, "tablaDatosSecundaria", false); document.getElementById('resultado').innerHTML = html; }
-
-function detectarMiembro() { var mSel = document.getElementById('jugador').value; var combo = document.getElementById('jugador'); if (!mSel) { if (combo && combo.options[0]) combo.options[0].text = "Tria jugador"; renderizarTablasCompletas(); return; } if (combo && combo.options[0]) combo.options[0].text = "Esborrar"; if (!datosEquipoActual) return; var dP = datosEquipoActual.principal; var dS = datosEquipoActual.secundaria; var colNom = -1; if (dP && dP[0]) { for (var j = 0; j < dP[0].length; j++) { var txt = dP[0][j].toString().trim().toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); if (txt.indexOf("NOM") > -1 || txt === "JUGADOR") { colNom = j; break; } } } if (colNom === -1) return; var fIdx = -1; for (var i = 1; i < dP.length; i++) { if (dP[i][colNom].toString().trim() === mSel) { fIdx = i; break; } } if (fIdx === -1) return; var htmlF = '<div style="margin-top: 25px; padding: 20px; background: #f8f9fa; border: 2px solid #1a73e8; border-radius: 8px; max-width: 500px; margin-left: auto; margin-right: auto;"><table style="width: 100%; border-collapse: collapse;">'; if (dP && dP[0]) { for (var j = 0; j < dP[0].length; j++) { var t = dP[0][j].toString().trim(); var v = dP[fIdx][j].toString().trim(); if (t === "" || t.toUpperCase().indexOf("BAIXES") > -1) continue; htmlF += '<tr style="border-bottom: 1px solid #ddd;"><td style="padding: 10px; font-weight: bold; color: #2c3e50; width: 45%; font-size: 15px; text-transform: uppercase;">' + t + ':</td><td style="padding: 10px; color: #333; font-size: 16px;">' + v + '</td></tr>'; } } if (dS && dS[0]) { for (var j = 0; j < dS[0].length; j++) { var tS = dS[0][j].toString().trim(); var vS = dS[fIdx][j].toString().trim(); if (tS === "" || tS.toUpperCase().indexOf("BAIXES") > -1) continue; htmlF += '<tr style="border-bottom: 1px solid #ddd;"><td style="padding: 10px; font-weight: bold; color: #2c3e50; width: 45%; font-size: 15px; text-transform: uppercase;">' + tS + ':</td><td style="padding: 10px; color: #333; font-size: 16px;">' + vS + '</td></tr>'; } } htmlF += '</table></div>'; document.getElementById('resultado').innerHTML = htmlF; }
-
-function generarEstructuraTabla(datos, idTabla, aplicarRoles) { if (!datos || datos.length === 0) return ''; var html = '<div class="tabla-contenedor"><table id="' + idTabla + '">'; var indicesAutoCentrados = []; var cabeceraFila = datos[0]; if (cabeceraFila && Array.isArray(cabeceraFila)) { for (var j = 0; j < cabeceraFila.length; j++) { var nombreCabecera = cabeceraFila[j].toString().replace(/\s+/g, ' ').trim().toLowerCase(); if (nombreCabecera === "dorsal" || nombreCabecera === "data naixement" || nombreCabecera === "anys al club") { indicesAutoCentrados.push(j); } } } for (var i = 0; i < datos.length; i++) { var filaVacia = datos[i].every(function(celda) { return celda.toString().trim() === ""; }); if (filaVacia) continue; var esEntrenador = false; if (aplicarRoles && i > 0) { for (var c = 0; c < datos[i].length; c++) { if (datos[i][c].toString().trim().toLowerCase() === "entrenador") { esEntrenador = true; break; } } } var claseFila = (i === 0) ? 'class="cabecera"' : (esEntrenador ? 'class="fila-entrenador"' : ''); html += '<tr ' + claseFila + '>'; for (var j = 0; j < datos[i].length; j++) { var valorCell = datos[i][j].toString().trim(); var claseCelda = indicesAutoCentrados.includes(j) ? 'class="col-auto-centrada"' : ''; if (i === 0) { html += '<th>' + valorCell + '</th>'; } else { if (aplicarRoles && !esEntrenador) { var textoMinuscula = valorCell.toLowerCase(); if (textoMinuscula === "porter") claseCelda = 'class="rol-porter"'; else if (textoMinuscula === "defensa") claseCelda = 'class="rol-defensa"'; else if (textoMinuscula === "migcampista") claseCelda = 'class="rol-migcampista"'; else if (textoMinuscula === "davanter") claseCelda = 'class="rol-davanter"'; else if (indicesAutoCentrados.includes(j)) claseCelda = 'class="col-auto-centrada"'; } else if (indicesAutoCentrados.includes(j)) { claseCelda = 'class="col-auto-centrada"'; } html += '<td ' + claseCelda + '>' + valorCell + '</td>'; } } html += '</tr>'; if (aplicarRoles && esEntrenador) { html += '<tr class="fila-separadora">'; for (var k = 0; k < datos[i].length; k++) html += '<td></td>'; html += '</tr>'; } } html += '</table></div>'; return html; }
+function cargarSelector(equipos) { 
+  var select = document.getElementById('equipo'); 
+  select.innerHTML = '<option value="">Tria equip</option>'; 
+  if (equipos && Array.isArray(equipos)) { 
+    equipos.forEach(function(nombre) { 
+      var option = document.createElement('option'); 
+      option.value = nombre; 
+      option.text = nombre; 
+      select.appendChild(option); 
+    }); 
+  } 
+}
