@@ -176,7 +176,7 @@ function detectarMiembro() {
   
   // Si el usuario selecciona "Esborrar" o la opción vacía, restauramos todo
   if (!miembroSeleccionado) {
-    if (comboJugador.options && comboJugador.options[0]) {
+    if (comboJugador && comboJugador.options && comboJugador.options[0]) {
       comboJugador.options[0].text = "Tria jugador"; // El texto vuelve a su estado original neutro
     }
     renderizarTablasCompletas();
@@ -184,7 +184,7 @@ function detectarMiembro() {
   }
 
   // Ajuste técnico: Cambiamos de forma estricta el texto del primer elemento (índice 0) a "Esborrar"
-  if (comboJugador.options && comboJugador.options[0]) {
+  if (comboJugador && comboJugador.options && comboJugador.options[0]) {
     comboJugador.options[0].text = "Esborrar";
   }
   
@@ -192,16 +192,18 @@ function detectarMiembro() {
   
   var datosP = datosEquipoActual.principal;
   var datosS = datosEquipoActual.secundaria;
-  var cabeceraP = datosP[0];
   
   // 1. Encontrar en qué columna de la tabla principal está el nombre
   var colNomIndex = -1;
-  for (var j = 0; j < cabeceraP.length; j++) {
-    if (cabeceraP[j].toString().trim().toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").indexOf("NOM") > -1) {
-      colNomIndex = j;
-      break;
+  if (datosP && datosP[0]) {
+      for (var j = 0; j < datosP[0].length; j++) {
+        var txtCab = datosP[0][j].toString().trim().toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        if (txtCab.indexOf("NOM") > -1 || txtCab === "JUGADOR") {
+          colNomIndex = j;
+          break;
+        }
+      }
     }
-  }
   
   if (colNomIndex === -1) return;
   
@@ -221,22 +223,23 @@ function detectarMiembro() {
   htmlFicha += '<table style="width: 100%; border-collapse: collapse;">';
   
   // Procesar campos de la Tabla Principal (C:I) hacia abajo
-  for (var j = 0; j < cabeceraP.length; j++) {
-    var tituloCamp = cabeceraP[j].toString().trim();
-    var valorCamp = datosP[filaJugadorIndex][j].toString().trim();
-    if (tituloCamp === "" || tituloCamp.toUpperCase().indexOf("BAIXES") > -1) continue; // Nos saltamos columnas sin título
-    
-    htmlFicha += '<tr style="border-bottom: 1px solid #ddd;">';
-    htmlFicha += '<td style="padding: 10px; font-weight: bold; color: #2c3e50; width: 45%; font-size: 15px; text-transform: uppercase;">' + tituloCamp + ':</td>';
-    htmlFicha += '<td style="padding: 10px; color: #333; font-size: 16px;">' + valorCamp + '</td>';
-    htmlFicha += '</tr>';
-  }
+  if (datosP[0]) {
+      for (var j = 0; j < datosP[0].length; j++) {
+        var tituloCamp = datosP[0][j].toString().trim();
+        var valorCamp = datosP[filaJugadorIndex][j].toString().trim();
+        if (tituloCamp === "" || tituloCamp.toUpperCase().indexOf("BAIXES") > -1) continue; 
+        
+        htmlFicha += '<tr style="border-bottom: 1px solid #ddd;">';
+        htmlFicha += '<td style="padding: 10px; font-weight: bold; color: #2c3e50; width: 45%; font-size: 15px; text-transform: uppercase;">' + tituloCamp + ':</td>';
+        htmlFicha += '<td style="padding: 10px; color: #333; font-size: 16px;">' + valorCamp + '</td>';
+        htmlFicha += '</tr>';
+      }
+    }
   
   // Processar columnes de la Taula Secundària (K)
-  if (datosS && datosS.length > 0) {
-    var cabeceraS = datosS[0]; // Accés correcte a la línia de títols secundària
-    for (var j = 0; j < cabeceraS.length; j++) {
-      var tituloCampS = cabeceraS[j].toString().trim();
+  if (datosS && datosS[0]) {
+    for (var j = 0; j < datosS[0].length; j++) {
+      var tituloCampS = datosS[0][j].toString().trim();
       var valorCampS = datosS[filaJugadorIndex][j].toString().trim();
       if (tituloCampS === "" || tituloCampS.toUpperCase().indexOf("BAIXES") > -1) continue;
       
