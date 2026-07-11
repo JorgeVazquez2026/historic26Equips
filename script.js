@@ -139,20 +139,21 @@ function renderizarTablasCompletas() {
 // ==========================================
 // VISTA INTERACTIVA DE LA FITXA VERTICAL
 // ==========================================
+
 function detectarMiembro() {
   var miembroSeleccionado = document.getElementById('jugador').value;
   var comboJugador = document.getElementById('jugador');
   
-  // Si es selecciona "Esborrar" o la opción buida, restaurem tot
+  // Si se selecciona "Esborrar" o la opción vacía, restauramos las tablas completas
   if (!miembroSeleccionado) {
     if (comboJugador && comboJugador.options && comboJugador.options[0]) {
       comboJugador.options[0].text = "Tria jugador"; 
     }
-    renderizarTablasCompletas();
+    renderTablasCompletas();
     return;
   }
   
-  // Ajuste técnico: Mutamos el texto de la opción 0 a "Esborrar"
+  // Mutamos el primer texto del desplegable a "Esborrar"
   if (comboJugador && comboJugador.options && comboJugador.options[0]) {
     comboJugador.options[0].text = "Esborrar";
   }
@@ -191,7 +192,7 @@ function detectarMiembro() {
   var htmlFicha = '<div style="margin-top: 25px; padding: 20px; background: #f8f9fa; border: 2px solid #1a73e8; border-radius: 8px; max-width: 500px; margin-left: auto; margin-right: auto;">';
   htmlFicha += '<table style="width: 100%; border-collapse: collapse;">';
   
-  // Datos de la Tabla Principal (C:I)
+  // CORRECCIÓN: Leer las columnas de la Fila 0 de la Tabla Principal (C:I)
   if (datosP && datosP.length > 0) {
     for (var j = 0; j < datosP[0].length; j++) {
       var tituloCamp = datosP[0][j].toString().trim();
@@ -205,7 +206,7 @@ function detectarMiembro() {
     }
   }
   
-  // Datos de la Tabla Secundaria (K)
+  // CORRECCIÓN: Leer las columnas de la Fila 0 de la Tabla Secundaria (K)
   if (datosS && datosS.length > 0) {
     for (var j = 0; j < datosS[0].length; j++) {
       var tituloCampS = datosS[0][j].toString().trim();
