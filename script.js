@@ -220,7 +220,7 @@ function detectarMiembro() {
   for (var j = 0; j < cabeceraS.length; j++) {
     var tituloCampS = cabeceraS[j].toString().trim();
     var valorCampS = datosS[filaJugadorIndex][j].toString().trim();
-    if (tituloCampS === "") continue;
+    if (tituloCampS === "" || tituloCampS.toUpperCase().indexOf("BAIXES") > -1) continue;
     
     htmlFicha += '<tr style="border-bottom: 1px solid #ddd;">';
     htmlFicha += '<td style="padding: 10px; font-weight: bold; color: #2c3e50; width: 45%; font-size: 15px; text-transform: uppercase;">' + tituloCampS + ':</td>';
