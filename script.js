@@ -329,29 +329,28 @@ function buscarSub23() {
 
 function mostrarTablaSub23(listaSub23) {
   if (!listaSub23 || listaSub23.length === 0) {
-    document.getElementById('resultado').innerHTML = "<p style='color:orange; text-align:center;'>No s'ha trobat cap jugador nascut després del 01/01/2003.</p>";
+    document.getElementById('resultado').innerHTML = "<p style='color:orange; text-align:center;'>No s'ha trobat cap jugador nascut després del 31/12/2002.</p>";
     return;
   }
   
-  // Fabriquem la taula de 3 columnes demanada: Equip, Nom i Data Naixement
-  var html = '<div class="tabla-contenedor" id="contenedorSub23" style="max-width: 600px; margin: 20px auto 0 auto;"><table>';
-  html += '<tr class="cabecera"><th>Equip</th><th>Nom</th><th class="col-auto-centrada">Data Naixement</th></tr>';
+  var html = '<div class="tabla-contenedor" style="max-width: 600px; margin: 20px auto 0 auto;"><table>';
+  // CORRECCIÓN INLINE: Forzamos el ancho de 100px directamente en la etiqueta TH de la fecha
+  html += '<tr class="cabecera"><th>Equip</th><th>Nom</th><th class="col-auto-centrada" style="width: 100px; min-width: 100px;">Data Naixement</th></tr>';
   
   for (var i = 0; i < listaSub23.length; i++) {
     var equipoNom = listaSub23[i][0];
     var nombre = listaSub23[i][1];
     var fecha = listaSub23[i][2];
-
-    // Control de seguridad: Limpiamos espacios para cruzarlo con tu diccionario de 12 escudos
+    
     var equipoLimpio = equipoNom ? equipoNom.toString().trim() : "";
-    // Buscamos si tenemos el enlace del escudo de este club en tu diccionario de arriba
-    var urlEscudo = ESCUDOS_EQUIPOS[equipoNom] || "https://wikimedia.org";
+    var urlEscudo = ESCUDOS_EQUIPOS[equipoLimpio] || "https://wikimedia.org";
     
     html += '<tr>';
-    // Colocamos el escudo y el nombre envueltos en clases de diseño inteligente
-    html += '<td><div class="celda-equipo"><img class="escudo-tabla-sub23" src="' + urlEscudo + '" alt="Escut"><span class="texto-equipo-sub23">' + equipoNom + '</span></div></td>';
-    html += '<td>' + nombre + '</td>';
-    html += '<td class="col-auto-centrada">' + fecha + '</td>';
+    html += '<td><div class="celda-equipo"><img class="escudo-tabla-sub23" src="' + urlEscudo + '" alt="Escut"><span class="texto-equipo-sub23">' + equipoLimpio + '</span></div></td>';
+    // Activamos que el nombre pueda respirar y usar el espacio restante
+    html += '<td style="white-space: normal !important; word-break: break-word;">' + nombre + '</td>';
+    // CORRECCIÓN INLINE: Forzamos los 100px en la celda TD de la fecha de cada jugador
+    html += '<td class="col-auto-centrada" style="width: 100px; min-width: 100px;">' + fecha + '</td>';
     html += '</tr>';
   }
   
