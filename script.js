@@ -326,9 +326,9 @@ function mostrarTablaSub23(listaSub23) {
   html += '<tr class="cabecera"><th>Equip</th><th>Nom</th><th class="col-auto-centrada">Data Naixement</th></tr>';
   
   for (var i = 0; i < listaSub23.length; i++) {
-    var equipoNom = listaSub23[i].equipo;
-    var nombre = listaSub23[i].nombre;
-    var fecha = listaSub23[i].fecha;
+    var equipoNom = listaSub23[i][0];
+    var nombre = listaSub23[i][1];
+    var fecha = listaSub23[i][2];
 
     // Control de seguridad: Limpiamos espacios para cruzarlo con tu diccionario de 12 escudos
     var equipoLimpio = equipoNom ? equipoNom.toString().trim() : "";
