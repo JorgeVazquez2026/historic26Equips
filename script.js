@@ -297,3 +297,46 @@ function generarEstructuraTabla(datos, idTabla, aplicarRoles) {
   html += '</table></div>'; 
   return html; 
 }
+
+// ==========================================
+// NUEVA PANTALLA: CERCADOR JUGADORS SUB23
+// ==========================================
+function buscarSub23() {
+  document.getElementById('resultado').innerHTML = "<p class='cargando'>Buscant tots els jugadors SUB23 a les plantilles...</p>";
+  
+  // Amaguem el combo de jugadors per netejar la vista de dalt
+  document.getElementById('bloqueJugador').style.display = "none";
+  
+  fetch(`${URL_API}?accion=sub23`)
+    .then(res => res.json())
+    .then(mostrarTablaSub23)
+    .catch(err => {
+      document.getElementById('resultado').innerHTML = "<p style='color:red; text-align:center;'>Error de connexió al cercar SUB23.</p>";
+    });
+}
+
+function mostrarTablaSub23(listaSub23) {
+  if (!listaSub23 || listaSub23.length === 0) {
+    document.getElementById('resultado').innerHTML = "<p style='color:orange; text-align:center;'>No s'ha trobat cap jugador nascut després del 31/12/2022.</p>";
+    return;
+  }
+  
+  // Fabriquem la taula de 3 columnes demanada: Equip, Nom i Data Naixement
+  var html = '<div class="tabla-contenedor"><table>';
+  html += '<tr class="cabecera"><th>Equip</th><th>Nom</th><th class="col-auto-centrada">Data Naixement</th></tr>';
+  
+  for (var i = 0; i < listaSub23.length; i++) {
+    var equipo = listaSub23[i][0];
+    var nombre = listaSub23[i][1];
+    var fecha = listaSub23[i][2];
+    
+    html += '<tr>';
+    html += '<td>' + equipo + '</td>';
+    html += '<td>' + nombre + '</td>';
+    html += '<td class="col-auto-centrada">' + fecha + '</td>';
+    html += '</tr>';
+  }
+  
+  html += '</table></div>';
+  document.getElementById('resultado').innerHTML = html;
+}
