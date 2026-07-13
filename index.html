@@ -35,7 +35,9 @@
       .cargando { color: #666; font-style: italic; margin-top: 15px; font-size: 17px; text-align: center; }
       /*table { border-collapse: collapse; width: 100%; background: white; table-layout: auto; border: 1px solid #815a01; }*/
       table { border-collapse: separate; border-spacing: 0; width: 100%; background: #ffffff; table-layout: auto; }
-      .tabla-contenedor { margin-top: 10px; border-radius: 6px; border: 1px solid #815a01; overflow: auto; max-height: 450px; -webkit-overflow-scrolling: touch; }
+      /*.tabla-contenedor { margin-top: 10px; border-radius: 6px; border: 1px solid #815a01; overflow: auto; max-height: 450px; -webkit-overflow-scrolling: touch; }*/
+      .tabla-contenedor { margin-top: 10px; border-radius: 6px; border: 1px solid #815a01; overflow: auto; max-height: 450px; -webkit-overflow-scrolling: touch; position: relative; }
+
       th, td { border: 1px solid #815a01; padding: 14px 16px; text-align: left; font-size: 16px; white-space: nowrap; }
       /*th { background-color: #815a01; color: #ffffff; font-weight: 700; text-transform: uppercase; font-size: 14px; letter-spacing: 0.5px; text-align: center !important; border: 1px solid #815a01; border-left: 1px solid #ffde94 !important; border-right: 1px solid #ffde94 !important; border-bottom: 2px solid #ffde94 !important; position: sticky; top: -1px; z-index: 10; }*/
       th:first-child { border-left: 1px solid #815a01 !important; }
@@ -63,31 +65,26 @@
       #tablaDatosSecundaria td { white-space: normal !important; word-break: break-word; }
 
       /* ========================================================== */
-      /* CONTROL FINAL DE CABECERAS FIJAS Y BORDES POR SEPARADO    */
+      /* CONTROL UNIFICADO DE CABECERAS FIJAS (STICKY HEADERS)     */
       /* ========================================================== */
 
-      /* 1. CONFIGURACIÓN BASE COMPARTIDA */
-      th { background-color: #815a01; color: #ffffff; font-weight: 700; text-transform: uppercase; font-size: 14px; letter-spacing: 0.5px; text-align: center !important; position: sticky; z-index: 10; box-sizing: border-box; }
-      td { background-color: #ffffff; box-sizing: border-box; }
-
-      /* 2. TABLA PRINCIPAL DE JUGADORES (1 FILA FIJA) */
-      #tablaDatosPrincipal th { top: 0; border-top: 1px solid #815a01; border-bottom: 2px solid #ffde94 !important; border-left: 1px solid #ffde94 !important; border-right: 1px solid #ffde94 !important; }
-      #tablaDatosPrincipal th:first-child { border-left: 1px solid #815a01 !important; }
-      #tablaDatosPrincipal th:last-child { border-right: 1px solid #815a01 !important; }
-
-      /* 3. TABLA DE BAJAS (2 FILAS FIJAS EN ESCALÓN PERFECTO) */
-      /* Fila superior (BAIXES 25/26): Forzamos su contorno y la línea inferior crema */
-      #tablaDatosSecundaria tr:nth-child(1) th { top: 0; z-index: 12; border-top: 1px solid #815a01; border-bottom: 2px solid #ffde94 !important; border-left: 1px solid #815a01 !important; border-right: 1px solid #815a01 !important; }
+      /* 1. REGLA GENERAL PARA TODOS LOS TÍTULOS DE LA WEB (Muro fijo con líneas crema) */
+      th { background-color: #815a01; color: #ffffff; font-weight: 700; text-transform: uppercase; font-size: 14px; letter-spacing: 0.5px; text-align: center !important; position: sticky; top: 0; z-index: 10; box-sizing: border-box; border: 1px solid #815a01; border-left: 1px solid #ffde94 !important; border-right: 1px solid #ffde94 !important; border-bottom: 2px solid #ffde94 !important; }
+      th:first-child { border-left: 1px solid #815a01 !important; }
+      th:last-child { border-right: 1px solid #815a01 !important; }
       
-      /* Fila inferior (JUGADOR / DESTÍ): Forzamos el suelo crema horizontal completo y laterales oscuros */
-      #tablaDatosSecundaria tr:nth-child(2) th { top: 44px; z-index: 11; border-top: none !important; border-bottom: 2px solid #ffde94 !important; border-left: 1px solid #ffde94 !important; border-right: 1px solid #ffde94 !important; }
-      #tablaDatosSecundaria tr:nth-child(2) th:first-child { border-left: 1px solid #815a01 !important; }
-      #tablaDatosSecundaria tr:nth-child(2) th:last-child { border-right: 1px solid #815a01 !important; }
+      /* Celdas blancas opacas para que hagan de pantalla por detrás */
+      td { background-color: #ffffff; box-sizing: border-box; border: 1px solid #815a01 !important; padding: 14px 16px; font-size: 16px; }
 
-      /* 4. TABLA DE SCOUTING GLOBAL SUB23 (RECUPERAR REJILLA COMPLETA) */
-      #contenedorSub23 table { border-collapse: separate !important; border-spacing: 0 !important; width: 100%; border: 1px solid #815a01; border-radius: 6px; overflow: hidden; }
-      #contenedorSub23 th { top: 0; border-top: 1px solid #815a01; border-bottom: 2px solid #815a01 !important; border-left: 1px solid #815a01; border-right: 1px solid #815a01; }
-      #contenedorSub23 td { border: 1px solid #815a01 !important; padding: 14px 16px; background-color: #ffffff; }
+      /* 2. EXCEPCIÓN DE ESCALÓN PARA LA TABLA DE BAJAS (Doble fila fija) */
+      /* La fila 1 se queda en el punto 0 y la fila 2 baja en escalón a 44px */
+      #tablaDatosSecundaria tr:nth-child(1) th { top: 0; z-index: 12; }
+      #tablaDatosSecundaria tr:nth-child(2) th { top: 43px; z-index: 11; border-top: none !important; }
+
+      /* 3. EXCEPCIÓN PARA LA TABLA SUB23 (Bordes oscuros estándar) */
+      #contenedorSub23 table { border-collapse: separate !important; border-spacing: 0 !important; width: 100%; }
+      #contenedorSub23 th { border-left: 1px solid #815a01 !important; border-right: 1px solid #815a01 !important; border-bottom: 2px solid #815a01 !important; }
+
 
 
 
