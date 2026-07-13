@@ -6,48 +6,55 @@
     <link rel="icon" type="image/svg+xml" href="https://upload.wikimedia.org/wikipedia/commons/6/6e/Football_%28soccer_ball%29.svg">
     <title>Històrics26 - Equips</title>
     <style>
+      /* ========================================================== */
+      /* 1. CONFIGURACIÓN GENERAL Y VISTA DE LA PÁGINA              */
+      /* ========================================================== */
       body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 12px; background-color: #f5f7fa; color: #333; margin: 0; font-size: 17px; }
       .contenedor { max-width: 1200px; margin: 0 auto; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
       .cabecera-web { display: flex; justify-content: space-between; align-items: center; background-color: #FFD700; padding: 15px 20px; border-radius: 6px; margin-bottom: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
       h2 { color: #563d04; margin: 0; font-size: 24px; text-align: left; font-weight: 700; }
       .logo-torneo { height: 60px; width: auto; object-fit: contain; filter: drop-shadow(0px 2px 4px rgba(130, 90, 0, 1)); }
       .espacio-tablas { margin-top: 30px; }
-      
-      /* CONTROLES EN FILA QUE SE ADAPTAN AUTOMÁTICAMENTE */
-      .controles { display: flex; flex-direction: column; gap: 15px; width: 100%; box-sizing: border-box; margin-bottom: 20px;}
-     
-      /* EN PC, LOS ELEMENTOS SUPERIORES VAN EN UNA SOLA LÍNEA RECTA CENTRADA EN ALTURA */
+      .cargando { color: #666; font-style: italic; margin-top: 15px; font-size: 17px; text-align: center; }
+
+      /* ========================================================== */
+      /* 2. SISTEMA DE CONTROLES Y BUSCADORES DE LA WEB             */
+      /* ========================================================== */
+      .controles { display: flex; flex-direction: column; gap: 15px; width: 100%; box-sizing: border-box; margin-bottom: 20px; }
       .fila-superior-busqueda { display: flex; flex-direction: column; align-items: center; gap: 15px; width: 100%; box-sizing: border-box; }
       .selector-bloque { display: flex; align-items: center; gap: 12px; width: 100%; box-sizing: border-box; }
-      
-      /* EL DESPLEGABLE SE QUEDA ESPERANDO ABAJO A LA IZQUIERDA CON SU ANCHO FIJO EXACTO */
       .bloque-jugador { display: none; width: 100%; max-width: 250px; box-sizing: border-box; margin-top: 5px; margin-left: 62px; } 
-      
       .escudo-club { height: 50px; width: 50px; object-fit: contain; display: none; }      
-      
-      /* BLOQUE INFERIOR PARA LEYENDA Y BOTÓN SUB23 */
       .bloque-inferior-controles { display: flex; flex-direction: column; align-items: center; gap: 15px; width: 100%; margin-top: 5px; }
       
       select { padding: 14px; font-size: 18px; border: 2px solid #ccc; border-radius: 6px; background: white; flex-grow: 1; box-sizing: border-box; width: 100%; }
       button { padding: 14px; font-size: 18px; background-color: #9f6f01; color: #FFFFFF; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; box-sizing: border-box; transition: background 0.2s ease; }
       button:hover { background-color: #3d2a02; }    
-      
-      .cargando { color: #666; font-style: italic; margin-top: 15px; font-size: 17px; text-align: center; }
-      /*table { border-collapse: collapse; width: 100%; background: white; table-layout: auto; border: 1px solid #815a01; }*/
-      table { border-collapse: separate; border-spacing: 0; width: 100%; background: #ffffff; table-layout: auto; }
-      /*.tabla-contenedor { margin-top: 10px; border-radius: 6px; border: 1px solid #815a01; overflow: auto; max-height: 450px; -webkit-overflow-scrolling: touch; }*/
-      .tabla-contenedor { margin-top: 10px; border-radius: 6px; border: 1px solid #815a01; overflow: auto; max-height: 450px; -webkit-overflow-scrolling: touch; position: relative; }
 
-      th, td { border: 1px solid #815a01; padding: 14px 16px; text-align: left; font-size: 16px; white-space: nowrap; }
-      /*th { background-color: #815a01; color: #ffffff; font-weight: 700; text-transform: uppercase; font-size: 14px; letter-spacing: 0.5px; text-align: center !important; border: 1px solid #815a01; border-left: 1px solid #ffde94 !important; border-right: 1px solid #ffde94 !important; border-bottom: 2px solid #ffde94 !important; position: sticky; top: -1px; z-index: 10; }
-      th:first-child { border-left: 1px solid #815a01 !important; }
-      th:last-child { border-right: 1px solid #815a01 !important; }*/
-      
-      /* AJUSTE DE ANCHURAS PARA LA TABLA DEL BOTÓN SUB23 */
-      #contenedorSub23 th:nth-child(2), #contenedorSub23 td:nth-child(2) { white-space: normal !important; word-break: break-word; }
-      #contenedorSub23 th:nth-child(3), #contenedorSub23 td:nth-child(3) { width: 100px; min-width: 100px; text-align: center !important; }
+      /* LEYENDA RESPONSIVA */
+      .separador-botones { width: 100%; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px; margin: 15px 0; padding: 10px 0; border-top: 1px solid rgba(129, 90, 1, 0.15); border-bottom: 1px solid rgba(129, 90, 1, 0.15); box-sizing: border-box; }
+      .leyenda-item { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: #563d04; white-space: nowrap; }
+      .leyenda-circulo { height: 11px; width: 11px; border-radius: 50%; display: inline-block; box-shadow: 0 1px 2px rgba(0,0,0,0.15); }
 
+      /* ========================================================== */
+      /* 3. ESTRUCTURA BASE DE TABLAS CON BORDES FINOS AJUSTADOS    */
+      /* ========================================================== */
+      table { border-collapse: separate; border-spacing: 0; width: 100%; background: #ffffff; table-layout: auto; border: 1px solid #815a01; border-radius: 5px; }
+      .tabla-contenedor { margin-top: 10px; border-radius: 6px; overflow: auto; max-height: 450px; -webkit-overflow-scrolling: touch; position: relative; }
+
+      /* Definimos que por defecto las celdas hereden solo las líneas fina inferior y derecha */
+      th, td { padding: 14px 16px; text-align: left; font-size: 16px; white-space: nowrap; box-sizing: border-box; border-top: none !important; border-left: none !important; border-bottom: 1px solid #815a01 !important; border-right: 1px solid #815a01 !important; }
+      
+      /* Rematamos los contornos para que no se sumen con el marco de la tabla */
+      tr:last-child td { border-bottom: none !important; }
+      th:last-child, td:last-child { border-right: none !important; }
+
+      /* CONFIGURACIÓN PROPORCIONAL DE COLUMNAS */
       .col-auto-centrada { width: 1%; text-align: center !important; white-space: nowrap; } 
+      .celda-equipo { display: flex; align-items: center; gap: 8px; }
+      .escudo-tabla-sub23 { height: 28px; width: 28px; object-fit: contain; display: inline-block; }
+
+      /* ROL COLORES BASE */
       .rol-porter { background-color: #e8f5e9 !important; color: #1b5e20; font-weight: bold; }        
       .rol-defensa { background-color: #e3f2fd !important; color: #0d47a1; font-weight: bold; }       
       .rol-migcampista { background-color: #fff3e0 !important; color: #e65100; font-weight: bold; }   
@@ -55,42 +62,32 @@
       .fila-entrenador td { background-color: #f3e5f5 !important; color: #4a148c; font-weight: bold; }    
       .fila-separadora { height: 25px; background-color: transparent !important; }
       .fila-separadora td { border: none !important; background: transparent !important; padding: 0 !important; }
-      .separador-botones { width: 100%; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px; margin: 15px 0; padding: 10px 0; border-top: 1px solid rgba(129, 90, 1, 0.15); border-bottom: 1px solid rgba(129, 90, 1, 0.15); box-sizing: border-box; }
-      .leyenda-item { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: #563d04; white-space: nowrap; }
-      .leyenda-circulo { height: 11px; width: 11px; border-radius: 50%; display: inline-block; box-shadow: 0 1px 2px rgba(0,0,0,0.15); }
 
-      .celda-equipo { display: flex; align-items: center; gap: 8px; }
-      .escudo-tabla-sub23 { height: 28px; width: 28px; object-fit: contain; display: inline-block; }
-      /* AJUSTE RESPONSIVO PARA LA NUEVA COLUMNA DE DESTINO EN LAS BAJAS */
+      /* ========================================================== */
+      /* 4. CONTROL DE CABECERAS FIJAS INDEPENDIENTES (STICKY)      */
+      /* ========================================================== */
+      th { background-color: #815a01; color: #ffffff; font-weight: 700; text-transform: uppercase; font-size: 14px; letter-spacing: 0.5px; text-align: center !important; position: sticky; top: 0; z-index: 10; border-bottom: 2px solid #ffde94 !important; border-right: 1px solid #ffde94 !important; }
+      th:first-child { border-left: none !important; }
+      th:last-child { border-right: none !important; }
+      td { background-color: #ffffff; }
+
+      /* TABLA SECUNDARIA: EXCEPCIÓN DE ESCALÓN PARA LAS BAJAS */
       #tablaDatosSecundaria td { white-space: normal !important; word-break: break-word; }
+      #tablaDatosSecundaria tr:nth-child(1) th { top: 0; z-index: 12; border-bottom: 1px solid #ffde94 !important; }
+      #tablaDatosSecundaria tr:nth-child(2) th { top: 43px; z-index: 11; border-bottom: 2px solid #ffde94 !important; }
 
-      /* ========================================================== */
-      /* CONTROL UNIFICADO DE CABECERAS FIJAS (STICKY HEADERS)     */
-      /* ========================================================== */
-
-      /* 1. REGLA GENERAL PARA TODOS LOS TÍTULOS DE LA WEB (Muro fijo con líneas crema) */
-      th { background-color: #815a01; color: #ffffff; font-weight: 700; text-transform: uppercase; font-size: 14px; letter-spacing: 0.5px; text-align: center !important; position: sticky; top: 0; z-index: 10; box-sizing: border-box; border: 1px solid #815a01; border-left: 1px solid #ffde94 !important; border-right: 1px solid #ffde94 !important; border-bottom: 2px solid #ffde94 !important; }
-      th:first-child { border-left: 1px solid #815a01 !important; }
-      th:last-child { border-right: 1px solid #815a01 !important; }
-      
-      /* Celdas blancas opacas para que hagan de pantalla por detrás */
-      td { background-color: #ffffff; box-sizing: border-box; border: 1px solid #815a01 !important; padding: 14px 16px; font-size: 16px; }
-
-      /* 2. EXCEPCIÓN DE ESCALÓN PARA LA TABLA DE BAJAS (Doble fila fija) */
-      /* La fila 1 se queda en el punto 0 y la fila 2 baja en escalón a 44px */
-      #tablaDatosSecundaria tr:nth-child(1) th { top: 0; z-index: 12; }
-      #tablaDatosSecundaria tr:nth-child(2) th { top: 43px; z-index: 11; border-top: none !important; }
-
-      /* 3. EXCEPCIÓN PARA LA TABLA SUB23 (Bordes oscuros estándar) */
+      /* TABLA SUB23: EXCEPCIÓN RESPONSIVA Y REJILLA INTEGRADA */
       #contenedorSub23 table { border-collapse: separate !important; border-spacing: 0 !important; width: 100%; }
-      #contenedorSub23 th { border-left: 1px solid #815a01 !important; border-right: 1px solid #815a01 !important; border-bottom: 2px solid #815a01 !important; }
+      #contenedorSub23 th { border-bottom: 2px solid #815a01 !important; border-right: 1px solid #815a01 !important; }
+      #contenedorSub23 td { border-bottom: 1px solid #815a01 !important; border-right: 1px solid #815a01 !important; white-space: normal !important; }
+      #contenedorSub23 tr:last-child td { border-bottom: none !important; }
+      #contenedorSub23 th:last-child, #contenedorSub23 td:last-child { border-right: none !important; }
+      #contenedorSub23 th:nth-child(2), #contenedorSub23 td:nth-child(2) { word-break: break-word; }
+      #contenedorSub23 th:nth-child(3), #contenedorSub23 td:nth-child(3) { width: 100px; min-width: 100px; text-align: center !important; }
 
-
-
-
-
-
-      
+      /* ========================================================== */
+      /* 5. REGLAS RESPONSIVAS ADAPTABLES (MEDIA QUERIES)           */
+      /* ========================================================== */
       @media (min-width: 600px) {
         body { padding: 30px; font-size: 15px; }
         .contenedor { padding: 25px; }
@@ -114,6 +111,7 @@
         .selector-bloque { width: auto; }
         #btnSub23 { margin-left: auto; }
       }
+
       
     </style>
   </head>
