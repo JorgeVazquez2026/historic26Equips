@@ -269,15 +269,15 @@ function generarEstructuraTabla(datos, idTabla, aplicarRoles, matrizColores) {
     if (i === 0 && idTabla === "tablaDatosSecundaria") {
       var tituloOriginalExcel = datos[i] ? datos[i].toString().trim() : "BAIXES 25/26";
       
-      // Fila 1: Título unificado (Las dos paredes exteriores van forzadas en oscuro #815a01)
+      // Fila 1: Título unificado - Separador de abajo claro (#9f6f01) y extremos exteriores oscuros (#815a01)
       html += '<tr class="cabecera">';
       html += '<th colspan="2" style="border-bottom: 1px solid #9f6f01; border-left: 1px solid #815a01 !important; border-right: 1px solid #815a01 !important;">' + tituloOriginalExcel + '</th>';
       html += '</tr>';
       
-      // Fila 2: Subtítulos de columna (Paredes interiores claras #9f6f01 y extremos oscuros #815a01)
+      // Fila 2: Subtítulos - Línea divisoria central y techos de color claro (#9f6f01). Laterales exteriores oscuros (#815a01)
       html += '<tr class="cabecera">';
-      html += '<th style="font-size: 12px; padding: 8px 12px; border-left: 1px solid #815a01 !important; border-right: 1px solid #9f6f01 !important;">JUGADOR</th>';
-      html += '<th style="font-size: 12px; padding: 8px 12px; border-left: 1px solid #9f6f01 !important; border-right: 1px solid #815a01 !important;">DESTÍ</th>';
+      html += '<th style="font-size: 12px; padding: 8px 12px; border-top: 1px solid #9f6f01 !important; border-bottom: 1px solid #9f6f01 !important; border-left: 1px solid #815a01 !important; border-right: 1px solid #9f6f01 !important;">JUGADOR</th>';
+      html += '<th style="font-size: 12px; padding: 8px 12px; border-top: 1px solid #9f6f01 !important; border-bottom: 1px solid #9f6f01 !important; border-left: 1px solid #9f6f01 !important; border-right: 1px solid #815a01 !important;">DESTÍ</th>';
       html += '</tr>';
       continue; 
     }
@@ -342,6 +342,7 @@ function generarEstructuraTabla(datos, idTabla, aplicarRoles, matrizColores) {
   html += '</table></div>'; 
   return html; 
 }
+
 
   
 
