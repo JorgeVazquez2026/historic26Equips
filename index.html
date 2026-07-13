@@ -10,22 +10,26 @@
       .contenedor { max-width: 1200px; margin: 0 auto; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
       .cabecera-web { display: flex; justify-content: space-between; align-items: center; background-color: #FFD700; padding: 15px 20px; border-radius: 6px; margin-bottom: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
       h2 { color: #563d04; margin: 0; font-size: 24px; text-align: left; font-weight: 700; }
-
       .logo-torneo { height: 60px; width: auto; object-fit: contain; filter: drop-shadow(0px 2px 4px rgba(130, 90, 0, 1)); }
-
       .espacio-tablas { margin-top: 30px; }
       
       /* CONTROLES EN FILA QUE SE ADAPTAN AUTOMÁTICAMENTE */
-      .controles { margin-bottom: 20px; display: flex; flex-direction: column; gap: 15px; align-items: center; justify-content: flex-start; width: 100%; }
+      .controles { margin-bottom: 20px; display: flex; flex-direction: column; gap: 15px; width: 100%; box-sizing: border-box; }
       .selector-bloque { display: flex; align-items: center; gap: 12px; width: 100%; box-sizing: border-box; }
-      .escudo-club { height: 50px; width: 50px; object-fit: contain; display: none; }
+      .escudo-club { height: 50px; width: 50px; object-fit: contain; display: none; }      
+      .bloque-jugador { display: none; width: 100%; box-sizing: border-box; }
+      
+      /* BLOQUE INFERIOR PARA LEYENDA Y BOTÓN SUB23 */
+      .bloque-inferior-controles { display: flex; flex-direction: column; align-items: center; gap: 15px; width: 100%; margin-top: 5px; }
+      
+
+
       
       select { padding: 14px; font-size: 18px; border: 2px solid #ccc; border-radius: 6px; background: white; flex-grow: 1; box-sizing: border-box; width: 100%; }
       button { padding: 14px; font-size: 18px; background-color: #9f6f01; color: #FFFFFF; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; box-sizing: border-box; transition: background 0.2s ease; }
       button:hover { background-color: #3d2a02; }
       
-      /* CONTENEDOR NUEVO OCULTO PARA EL SEGUNDO COMBOBO */
-      .bloque-jugador { display: none; width: 100%; box-sizing: border-box; }
+
       
       .cargando { color: #666; font-style: italic; margin-top: 15px; font-size: 17px; text-align: center; }
       table { border-collapse: collapse; width: 100%; background: white; table-layout: auto; border: 1px solid #815a01; }
@@ -62,11 +66,12 @@
         h2 { font-size: 26px; }
         .logo-torneo { height: 80px; }
         .separador-botones { justify-content: flex-start; padding: 0; border: none; width: auto; margin: 0 20px; min-height: 40px; } 
-
+        .bloque-inferior-controles { flex-direction: row; justify-content: space-between; }
       }
-
+      
       .celda-equipo { display: flex; align-items: center; gap: 8px; }
       .escudo-tabla-sub23 { height: 28px; width: 28px; object-fit: contain; display: inline-block; }
+      
       @media (max-width: 600px) { 
         .texto-equipo-sub23 { display: none; }
       }
@@ -81,45 +86,49 @@
       </div>
       
       <div class="controles">
+        <!-- FILA 1: Desplegable de Clubs + Botón Cerca -->
         <div class="selector-bloque">
           <img id="escudoClub" class="escudo-club" src="" alt="Escut">
           <select id="equipo" onchange="cambiarEscudo()">
             <option value="">Tria equip</option>
           </select>
+          <button onclick="buscar()" style="width: auto; min-width: 120px;">Cerca</button>
         </div>
-        <button onclick="buscar()">Cerca</button>
         
-        <!-- SEGUNDO MENÚ DESPLEGABLE CON LOS NOMBRES -->
+        <!-- FILA 2: Desplegable de Jugadores (Aparecerá justo debajo) -->
         <div id="bloqueJugador" class="bloque-jugador">
           <select id="jugador" onchange="detectarMiembro()">
             <option value="">Tria jugador</option>
           </select>
         </div>
-        
-        <!-- AQUÍ VA LA LÍNEA DE SEPARACIÓN INTERACTIVA -->
-        <!-- BLOQUE DE LEYENDA INTELLIGENT DE COLORES -->
-        <div class="separador-botones">
-          <div class="leyenda-item">
-            <span class="leyenda-circulo" style="background-color: #38761d;"></span>
-            <span>Continua</span>
+
+        <!-- FILA 3: Contenedor para la Leyenda y el Botón SUB23 en los extremos -->
+        <div class="bloque-inferior-controles">
+          <!-- LEYENDA DE COLORES -->
+          <div class="separador-botones" style="margin: 0; border: none; padding: 0; width: auto;">
+            <div class="leyenda-item">
+              <span class="leyenda-circulo" style="background-color: #38761d;"></span>
+              <span>Continua</span>
+            </div>
+            <div class="leyenda-item">
+              <span class="leyenda-circulo" style="background-color: #1155cc;"></span>
+              <span>Possible fitxatge</span>
+            </div>
+            <div class="leyenda-item">
+              <span class="leyenda-circulo" style="background-color: #cc0000;"></span>
+              <span>Possible baixa</span>
+            </div>
+            <div class="leyenda-item">
+              <span class="leyenda-circulo" style="background-color: #674ea7;"></span>
+              <span>Possible destí</span>
+            </div>
           </div>
-          <div class="leyenda-item">
-            <span class="leyenda-circulo" style="background-color: #1155cc;"></span>
-            <span>Possible fitxatge</span>
-          </div>
-          <div class="leyenda-item">
-            <span class="leyenda-circulo" style="background-color: #cc0000;"></span>
-            <span>Possible baixa</span>
-          </div>
-          <div class="leyenda-item">
-            <span class="leyenda-circulo" style="background-color: #674ea7;"></span>
-            <span>Possible destí</span>
-          </div>
+
+          <!-- BOTÓN SUB23 AL EXTREMO DERECHO -->
+          <button id="btnSub23" onclick="buscarSub23()" style="background-color: #2c3e50; width: auto; min-width: 120px;">SUB23</button>
         </div>
-        
-        <!-- BOTÓN SUB23 ACTUALIZADO CON MARGEN AUTO -->
-        <button id="btnSub23" onclick="buscarSub23()" style="margin-left: auto;">Sub-23</button>
       </div>
+
       
       <div id="resultado"></div>
     </div>
