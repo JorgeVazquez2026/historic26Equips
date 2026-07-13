@@ -232,10 +232,12 @@ function completarDatosFicha(nombreJugador) {
 function generarEstructuraTabla(datos, idTabla, aplicarRoles, matrizColores) { 
   if (!datos || datos.length === 0) return ''; 
   
+  // CORRECCIÓN DEFINITIVA: Fijamos un ancho limpio de 500px para que en el ordenador encaje milimétrico
   var estiloContenedor = "";
   if (idTabla === "tablaDatosSecundaria") {
-    estiloContenedor = 'style="max-width: max-content; margin: 20px auto 0 auto;"';
+    estiloContenedor = 'style="width: 100%; max-width: 500px; margin: 20px auto 0 auto;"';
   }
+
   
   var html = '<div class="tabla-contenedor" ' + estiloContenedor + '><table id="' + idTabla + '">'; 
   var indicesAutoCentrados = []; 
