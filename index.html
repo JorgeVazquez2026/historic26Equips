@@ -63,31 +63,32 @@
       #tablaDatosSecundaria td { white-space: normal !important; word-break: break-word; }
 
       /* ========================================================== */
-      /* CONTROL DE CABECERAS FIJAS DEFINTIVO (CON BORDES PROTEGIDOS)*/
+      /* CONTROL FINAL DE CABECERAS FIJAS Y BORDES POR SEPARADO    */
       /* ========================================================== */
 
-      /* 1. ESTILOS COMPARTIDOS CON FONDO BLANCO PARA JUGADORES */
+      /* 1. CONFIGURACIÓN BASE COMPARTIDA */
       th { background-color: #815a01; color: #ffffff; font-weight: 700; text-transform: uppercase; font-size: 14px; letter-spacing: 0.5px; text-align: center !important; position: sticky; z-index: 10; box-sizing: border-box; }
       td { background-color: #ffffff; box-sizing: border-box; }
 
-      /* 2. REGLAS PARA LA TABLA PRINCIPAL DE JUGADORES (1 FILA FIJA) */
+      /* 2. TABLA PRINCIPAL DE JUGADORES (1 FILA FIJA) */
       #tablaDatosPrincipal th { top: 0; border-top: 1px solid #815a01; border-bottom: 2px solid #ffde94 !important; border-left: 1px solid #ffde94 !important; border-right: 1px solid #ffde94 !important; }
       #tablaDatosPrincipal th:first-child { border-left: 1px solid #815a01 !important; }
       #tablaDatosPrincipal th:last-child { border-right: 1px solid #815a01 !important; }
 
-      /* 3. REGLAS PARA LA TABLA DE BAJAS (2 FILAS FIJAS EN ESCALÓN) */
-      /* Fila 1 (Título grande de Baixes) */
-      #tablaDatosSecundaria tr:nth-child(1) th { top: 0; z-index: 12; border-top: 1px solid #815a01; border-bottom: 1px solid #ffde94 !important; border-left: 1px solid #815a01 !important; border-right: 1px solid #815a01 !important; }
+      /* 3. TABLA DE BAJAS (2 FILAS FIJAS EN ESCALÓN PERFECTO) */
+      /* Fila superior (BAIXES 25/26): Forzamos su contorno y la línea inferior crema */
+      #tablaDatosSecundaria tr:nth-child(1) th { top: 0; z-index: 12; border-top: 1px solid #815a01; border-bottom: 2px solid #ffde94 !important; border-left: 1px solid #815a01 !important; border-right: 1px solid #815a01 !important; }
       
-      /* Fila 2 (Subtítulos JUGADOR / DESTÍ) - Clavados en escalón a 44px */
-      #tablaDatosSecundaria tr:nth-child(2) th { top: 44px; z-index: 11; border-top: 1px solid #ffde94 !important; border-bottom: 2px solid #ffde94 !important; border-left: 1px solid #ffde94 !important; border-right: 1px solid #ffde94 !important; }
+      /* Fila inferior (JUGADOR / DESTÍ): Forzamos el suelo crema horizontal completo y laterales oscuros */
+      #tablaDatosSecundaria tr:nth-child(2) th { top: 44px; z-index: 11; border-top: none !important; border-bottom: 2px solid #ffde94 !important; border-left: 1px solid #ffde94 !important; border-right: 1px solid #ffde94 !important; }
       #tablaDatosSecundaria tr:nth-child(2) th:first-child { border-left: 1px solid #815a01 !important; }
       #tablaDatosSecundaria tr:nth-child(2) th:last-child { border-right: 1px solid #815a01 !important; }
 
-      /* 4. REGLAS PARA LA TABLA DE SCOUTING GLOBAL SUB23 (CORREGIDO) */
-      #contenedorSub23 table { border-collapse: separate !important; border-spacing: 0 !important; width: 100%; }
+      /* 4. TABLA DE SCOUTING GLOBAL SUB23 (RECUPERAR REJILLA COMPLETA) */
+      #contenedorSub23 table { border-collapse: separate !important; border-spacing: 0 !important; width: 100%; border: 1px solid #815a01; border-radius: 6px; overflow: hidden; }
       #contenedorSub23 th { top: 0; border-top: 1px solid #815a01; border-bottom: 2px solid #815a01 !important; border-left: 1px solid #815a01; border-right: 1px solid #815a01; }
-      #contenedorSub23 td { border: 1px solid #815a01; padding: 14px 16px; background-color: #ffffff; }
+      #contenedorSub23 td { border: 1px solid #815a01 !important; padding: 14px 16px; background-color: #ffffff; }
+
 
 
 
